@@ -2,6 +2,54 @@
 
 This project provides a robust and efficient implementation of the SHA-2 cryptographic hash function in C, specifically targeting the SHA-256 and SHA-512 variants. Designed for simplicity and performance, it\'s a great starting point for anyone looking to understand or utilize cryptographic hashing in their applications.
 
+# Project File Structure
+
+This section outlines the structure of the project files and directories, providing a clear overview of where each component of the SHA-2 implementation is located.
+
+```
+SHA-2-Implementation/
+├── src/
+│   ├── sha2.c               - Main SHA-2 algorithm implementation.
+│   └── sha2_utils.c         - Utility functions for the SHA-2 algorithm.
+│
+├── include/
+│   ├── sha2.h               - Header file for sha2.c.
+│   └── sha2_utils.h         - Header file for sha2_utils.c.
+│
+├── tests/
+│   ├── test_sha256.c        - Test cases for the SHA-256 algorithm.
+│   └── test_sha512.c        - Test cases for the SHA-512 algorithm.
+│
+├── examples/
+│   └── example_usage.c      - Example usage of the SHA-2 implementation.
+│
+├── docs/
+│   └── Documentation files and additional resources.
+│
+├── build/
+│   └── Compiled binaries and object files (excluded from source control).
+│
+├── .vscode/
+│   ├── settings.json        - Custom settings for Visual Studio Code.
+│   ├── launch.json          - Debugger configuration.
+│   └── tasks.json           - Build tasks configuration.
+│
+├── Makefile or CMakeLists.txt
+│   └── Build automation scripts.
+│
+├── .gitignore
+│   └── Specifies intentionally untracked files to ignore.
+│
+├── README.md
+│   └── Project overview and documentation.
+│
+└── LICENSE
+    └── The license under which the project is released.
+```
+
+This file structure is designed to be clear and modular, allowing easy access to different parts of the project. It also supports best practices in software development, such as separation of source and header files, inclusion of tests and examples, and comprehensive documentation.
+
+
 ## Features
 
 - **Efficient C Implementation**: Optimized for performance and memory usage.
