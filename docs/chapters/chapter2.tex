@@ -1,0 +1,137 @@
+\chapter{SHA Family}
+
+\begin{table}[h]
+	\centering
+	\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}|X|X|X|X|c|}
+		\hline
+		\textbf{Algorithm} & \textbf{Year} & \textbf{Developer} & \textbf{Design} & \textbf{Status} \\ \hline
+		SHA-0              & 1993          & NSA                & MD+ARX          & Broken          \\ \hline
+		SHA-1              & 1995          & NSA                & MD+ARX          & Broken          \\ \hline
+		SHA-2              & 2001          & NSA                & MD+ARX          &                 \\ \hline
+		SHA-3              & 2015          & Industry           & Sponge          &                 \\ \hline
+	\end{tabularx}
+	\caption{SHA Algorithm Versions}
+	\label{tab:sha-versions}
+\end{table}
+
+\section{SHA-1}
+\begin{tikzpicture}
+	% Define styles
+	\tikzset{
+		blueblock/.style={rectangle, draw, fill=blue!20, text width=2.5em, text centered, minimum height=2.5em},
+		cyanblock/.style={rectangle, draw, fill=cyan!20, text width=2.5em, text centered, minimum height=2.5em},
+		redblock/.style={rectangle, draw, fill=red!20, text width=2.5em, text centered, minimum height=2.5em},
+		greenblock/.style={rectangle, draw, fill=green!20, text width=2.5em, text centered, minimum height=2.5em},
+		line/.style={draw, -Latex},
+		xor/.style={circle, draw, minimum size=0cm, inner sep=0pt}
+	}
+	% Nodes
+	\node[greenblock] (iv) {IV};
+	\node[blueblock, right=2cm of iv] (cf0) {CF};
+	\node[blueblock, right=2cm of cf0] (cf1) {CF};
+	\node[blueblock, right=2cm of cf1] (cf2) {...};
+	\node[blueblock, right=2cm of cf2] (cf3) {CF};
+	\node[redblock, right=2cm of cf3] (hash) {Hash};
+	
+	\node[cyanblock, above=2cm of cf0] (m0) {$M[0]$};
+	\node[cyanblock, above=2cm of cf1] (m1) {$M[1]$};
+	\node[cyanblock, above=2cm of cf3] (mn) {$M[n]$};
+	
+	\draw[line] (iv) -- (cf0) node[midway, above] {160-bit};
+	\draw[line] (cf0) -- (cf1) node[midway, above] {160-bit};
+	\draw[line] (cf1) -- (cf2) node[midway, above] {160-bit};
+	\draw[line] (cf2) -- (cf3) node[midway, above] {160-bit};
+	\draw[line] (cf3) -- (hash) node[midway, above] {160-bit};
+	
+	\draw[line] (m0) -- (cf0) node[midway, left] {512-bit};
+	\draw[line] (m1) -- (cf1) node[midway, left] {512-bit};
+	\draw[line] (mn) -- (cf3) node[midway, left] {512-bit};
+	
+%	\node[below=1cm of p1] (xor1) {\Huge $\oplus$};
+%	\node[below=1cm of p2] (xor2) {\Huge $\oplus$};
+%	\node[below=1cm of p3] (xor3) {\Huge $\oplus$};
+%	\node[below=1cm of p4] (xor4) {\Huge $\oplus$};
+%	
+%	\node[block, below=1cm of xor1] (e1) {$E_K$};
+%	\node[block, below=1cm of xor2] (e2) {$E_K$};
+%	\node[block, below=1cm of xor3] (e3) {...};
+%	\node[block, below=1cm of xor4] (e4) {$E_K$};
+%	
+%	\node[block, below=1cm of e1] (c1) {$C_1$};
+%	\node[block, below=1cm of e2] (c2) {$C_2$};
+%	\node[block, below=1cm of e3] (c3) {...};
+%	\node[block, below=1cm of e4] (c4) {$C_n$};
+	
+	% Arrows
+%	\draw[line] (iv.south) to[bend right=45] (xor1.west);
+%	\draw[line] (p1) -- (xor1);
+%	\draw[line] (xor1) -- (e1);
+%	\draw[line] (e1) -- (c1);
+%	
+%	\draw[line] (c1.east) to[bend right=45] ($(c1)!.5!(xor2)$) to[bend left=45] (xor2.west);
+%	\draw[line] (p2) -- (xor2);
+%	\draw[line] (xor2) -- (e2);
+%	\draw[line] (e2) -- (c2);
+%	
+%	\draw[line] (c2.east) to[bend right=45] ($(c2)!.5!(xor3)$) to[bend left=45] (xor3.west);
+%	\draw[line] (p3) -- (xor3);
+%	\draw[line] (xor3) -- (e3);
+%	\draw[line] (e3) -- (c3);
+%	
+%	\draw[line] (c3.east) to[bend right=45] ($(c3)!.5!(xor4)$) to[bend left=45] (xor4.west);
+%	\draw[line] (p4) -- (xor4);
+%	\draw[line] (xor4) -- (e4);
+%	\draw[line] (e4) -- (c4);
+\end{tikzpicture}
+
+
+\begin{lstlisting}[style=C, caption={Key Expansion in C (General ver.)},captionpos=t]
+// Define the SHA1 message digest structure
+typedef struct {
+	uint32_t state[5];
+	uint32_t count[2];
+	uint8_t buffer[64];
+} sha1_t;
+
+// Initialize the SHA1 message digest with a given seed
+void sha1_init(sha1_t *sha1, uint32_t seed) {
+	memset(sha1->state, 0, sizeof(sha1->state));
+	sha1->count[0] = seed;
+	sha1->count[1] = (seed >> 8) | ((seed & 0xff) << 24);
+}
+
+// Update the SHA1 message digest with a given block of data
+void sha1_update(sha1_t *sha1, const void *data, size_t len) {
+	while (len >= 64) {
+		uint32_t words[16];
+		for (int i = 0; i < 16; i++) {
+			words[i] = ((uint32_t *)data)[i];
+		}
+		sha1->state[0] += words[0];
+		sha1->state[1] += words[1];
+		sha1->state[2] += words[2];
+		sha1->state[3] += words[3];
+		sha1->state[4] += words[4];
+		for (int i = 0; i < 64; i++) {
+			sha1->buffer[i] ^= ((uint8_t *)&words[i])[i & 3];
+		}
+		len -= 64;
+		data += 64;
+	}
+}
+
+// Finalize the SHA1 message digest and return the resulting hash
+void sha1_final(sha1_t *sha1, uint8_t *hash) {
+	sha1->state[0] = (sha1->state[0] & 0xff000000) | ((sha1->state[0] >> 24) & 0x00ffffff);
+	sha1->state[1] = (sha1->state[1] & 0x00ffffff) | ((sha1->state[1] << 8) & 0xff000000);
+	sha1->state[2] = (sha1->state[2] & 0x00ffffff) | ((sha1->state[2] << 16) & 0xff000000);
+	sha1->state[3] = (sha1->state[3] & 0x00ffffff) | ((sha1->state[3] << 24) & 0xff000000);
+	sha1->count[0] += 64;
+	for (int i = 0; i < 5; i++) {
+		hash[i] = (uint8_t)(sha1->state[i] >> 24);
+		hash[i + 4] = (uint8_t)(sha1->state[i] >> 16);
+		hash[i + 8] = (uint8_t)(sha1->state[i] >> 8);
+		hash[i + 12] = (uint8_t)sha1->state[i];
+	}
+}
+\end{lstlisting}

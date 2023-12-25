@@ -1,0 +1,9 @@
+\contentsline {chapter}{\numberline {1}Hash Function}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Cryptographic Hash Function}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Hash Function Structure}{1}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Padding}{1}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}Merkle-Damgård Transform}{1}{subsection.1.2.2}%
+\contentsline {chapter}{\numberline {2}SHA Family}{2}{chapter.2}%
+\contentsline {section}{\numberline {2.1}SHA-1}{2}{section.2.1}%
+\contentsline {chapter}{\numberline {A}Additional Data A}{4}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Substitution-BOX}{4}{section.A.1}%

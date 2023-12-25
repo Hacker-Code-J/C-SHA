@@ -1,0 +1,49 @@
+\chapter{Hash Function}
+
+\section{Cryptographic Hash Function}
+\section{Hash Function Structure}
+
+\subsection{Padding}
+To encrypt a message of any length in `$\lambda$' bits, the message must first be divided into segments, each exactly $\lambda$ bits in length. \[
+m\longrightarrow\underbrace{m\parallel\text{pad}}_{t\cdot\lambda-\text{bit}}.
+\]
+
+Let $k=\text{Bitlen}(m)$. Then
+
+\begin{table}[h!]\centering\renewcommand{\arraystretch}{1.25} % Increase row height by 1.5 times
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}cXc}
+	\hline
+	\textbf{Type of Padding} & \textbf{Definition} & \textbf{Application} \\
+	\hline
+	Zeros & \( m\parallel 0^{\lambda - (k \mod \lambda)} \) & \\
+	\hline
+	One-Zeros & \( m \,||\, 1 \,||\, 0^{l-1 - (\text{Bitlen}(m) \mod l)} \) & LSH \\
+	\hline
+	One-Zeros-Bitlen & \( m \,||\, 1 \,||\, 0^{l-1 - (\text{Bitlen}(m) \mod l)} \) & MD5, SHA-1, SHA-2 \\
+	\hline
+	Zeros-Bitlen & \( m \,||\, 1 \,||\, 0^{l-1 - (\text{Bitlen}(m) \mod l)} \) &  \\
+	\hline
+	One-Zeros-One & \( m \,||\, 1 \,||\, 0^{l-1 - (\text{Bitlen}(m) \mod l)} \) & SHA-3 \\
+	\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Merkle-Damgård Transform}
+
+Consider a function \[
+f:\binaryfield^{n+\lambda}=\binaryfield^{n}\times\binaryfield^\lambda\to\binaryfield^n.
+\]
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\KwIn{Input message $M\in\binaryfield^*$}
+	\KwResult{Hash value of the input message $H\in\binaryfield^n$}
+	\BlankLine
+	$M_1,M_2,\dots, M_t\gets\text{Pad}(M)$\tcp*{$M_i\in\binaryfield^\lambda$}
+	$H\gets IV$\tcp*{Initialize Chaining Variable}
+	\For{$i\leftarrow 1$ \KwTo $n$}{
+		$H \leftarrow$ $f(H, M_i)$\tcp*{Compression Function}
+	}
+	\Return{$H$}\;
+	\caption{Hash Function based on Merkle-Damgård Transformation}
+\end{algorithm}
